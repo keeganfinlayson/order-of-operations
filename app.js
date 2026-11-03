@@ -7,6 +7,8 @@ const nextExpression=createExpressionGenerator();
 let pendingAnswer=null;
 let fractionBars=false;
 try{fractionBars=localStorage.getItem('order-division-display')==='fraction';}catch{}
+let multiplicationStyle=fractionBars?'parentheses':'times';
+try{const saved=localStorage.getItem('order-multiplication-display');if(['times','dot','parentheses'].includes(saved))multiplicationStyle=saved;}catch{}
 const $=id=>document.getElementById(id);let root,original='',busy=false,demonstrating=false,session=0,selected=null,moves=0,drag=null,seconds=0,ticking=false;
 const colors={'+':'add','-':'subtract','*':'multiply','/':'divide','^':'exponent'},symbols={'+':'+','-':'−','*':'×','/':'÷'};
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
@@ -16,8 +18,8 @@ function tokens(n,parent=null,isPower=false){if(n.type==='number'){let el=docume
  if(n.type==='unary')return [n.sign==='-'?minusToken(n.id):span(n.sign,'op'),...tokens(n.child)];
  if(n.op==='/'&&fractionBars){let fraction=span('','fraction'),top=span('','numerator math-row'),bottom=span('','denominator math-row');top.append(...tokens(ungroup(n.left),n));bottom.append(...tokens(ungroup(n.right),n));fraction.append(top,bottom);return [fraction];}
  if(n.op==='^'){let sup=document.createElement('span');sup.className='sup';sup.append(...tokens(n.right,n,true));const power=span('','workspace-power');power.append(...(n.left.type==='number'&&n.left.value<0?[span('(','paren'),...tokens(n.left,n),span(')','paren')]:tokens(n.left,n)),sup);return [power];}
- if(n.op==='*'&&fractionBars){let product=span('','math-row proximity-product'),right=tokens(n.right,n),left=tokens(n.left,n);if(proximityNeedsParens(n.right)){let group=span('','math-group multiplication-group'),content=span('','math-row');content.append(...right);group.append(span('(','paren'),content,span(')','paren'));right=[group];}else for(const node of right)if(node.classList.contains('math-group'))node.classList.add('multiplication-group');for(const node of left)if(node.classList.contains('math-group'))node.classList.add('multiplication-group');product.append(...left,...right);return [product];}
- return [...tokens(n.left,n),n.op==='-'&&n.right.type==='group'?minusToken(n.id):span(symbols[n.op],'op '+colors[n.op]),...tokens(n.right,n)];}
+ if(n.op==='*'&&multiplicationStyle==='parentheses'){let product=span('','math-row proximity-product'),right=tokens(n.right,n),left=tokens(n.left,n);if(proximityNeedsParens(n.right)){let group=span('','math-group multiplication-group'),content=span('','math-row');content.append(...right);group.append(span('(','paren'),content,span(')','paren'));right=[group];}else for(const node of right)if(node.classList.contains('math-group'))node.classList.add('multiplication-group');for(const node of left)if(node.classList.contains('math-group'))node.classList.add('multiplication-group');product.append(...left,...right);return [product];}
+ return [...tokens(n.left,n),n.op==='-'&&n.right.type==='group'?minusToken(n.id):span(n.op==='*'&&multiplicationStyle==='dot'?'·':symbols[n.op],'op '+colors[n.op]),...tokens(n.right,n)];}
 function span(text,cls){let el=document.createElement('span');el.className=cls;el.textContent=text;return el;}
 let fittedScale={key:null,size:80};
 function fit(){
@@ -61,7 +63,7 @@ function pair(a,b){return distributionMove(root,a,b)||ready(root).find(n=>(n.lef
 function elFor(id){return $('expression').querySelector(`[data-id="${id}"]`);}
 function tap(id){if(busy||demonstrating||pendingAnswer)return;if(selected===null){selected=id;elFor(id)?.classList.add('selected');updateGuide(id);}else{let op=pair(selected,id);document.querySelectorAll('.selected').forEach(e=>e.classList.remove('selected'));selected=null;if(op)requestMove(op);else updateGuide();}}
 function snapshot(){return new Map([...$('expression').querySelectorAll('.num[data-id]')].map(el=>[el.dataset.id,el.getBoundingClientRect()]));}
-function formatted(n){return formatMath(n,fractionBars);}
+function formatted(n){return formatMath(n,fractionBars,false,multiplicationStyle);}
 function addStep(initial=false){const row=document.createElement('div');row.className='step';row.expressionTree=structuredClone(root);let index=span(initial?'•':String(moves),'step-index');let expression=document.createElement('span');expression.className='step-expression';expression.innerHTML=formatted(root);row.append(index,expression);$('steps').append(row);row.scrollIntoView({block:'nearest',behavior:'smooth'});$('stepCount').textContent=moves+' move'+(moves===1?'':'s');return row;}
 function clearAnswer(){
  pendingAnswer=null;$('answerForm').hidden=true;
@@ -146,6 +148,19 @@ const distributionHelp=document.createElement('p');distributionHelp.textContent=
 $('timer').onclick=()=>{ticking=!ticking;$('timerRead').hidden=false;$('timer').classList.toggle('on',ticking);};setInterval(()=>{if(ticking){seconds++;$('timerRead').textContent=Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0');}},1000);
 $('demo').onclick=async()=>{if(demonstrating){demonstrating=false;session++;busy=false;render();$('demo').innerHTML='Show Me How <span>▷</span>';return;}setEditorOpen(false);let text=original;ticking=false;$('timer').classList.remove('on');load(text,true);demonstrating=true;$('demo').textContent='Stop Demo';render();let epoch=session;await wait(650);while(demonstrating&&epoch===session&&root.type!=='number'){let op=ready(root)[0];if(!op)break;let a=elFor(op.left.id),b=elFor(op.right.id);if(!a||!b)break;a.classList.add('selected');let ar=a.getBoundingClientRect(),br=b.getBoundingClientRect();let ghost=a.cloneNode(true);ghost.className+=' drag-ghost';ghost.style.left=ar.left+'px';ghost.style.top=ar.top+'px';ghost.style.fontSize=getComputedStyle(a).fontSize;ghost.style.width=ar.width+'px';ghost.style.height=ar.height+'px';document.body.append(ghost);let animation=ghost.animate([{transform:'translate(0,0)'},{transform:`translate(${br.left-ar.left}px,${br.top-ar.top-12}px)`,offset:.75},{transform:`translate(${br.left-ar.left}px,${br.top-ar.top}px)`}],{duration:800,easing:'ease-in-out',fill:'forwards'});await animation.finished;ghost.remove();a.classList.remove('selected');if(epoch!==session)break;await perform(op);await wait(450);}if(epoch===session){demonstrating=false;$('demo').innerHTML='Show Me How <span>▷</span>';render();}};
 function setDivisionDisplay(useBars){if(busy||demonstrating||pendingAnswer)return;fractionBars=useBars;selected=null;try{localStorage.setItem('order-division-display',useBars?'fraction':'sign');}catch{}syncDivisionButtons();render();for(const row of $('steps').querySelectorAll('.step'))row.querySelector('.step-expression').innerHTML=formatted(row.expressionTree);}
-function syncDivisionButtons(){$('divisionSign').setAttribute('aria-pressed',String(!fractionBars));$('fractionBar').setAttribute('aria-pressed',String(fractionBars));$('fractionBar').title='Use fraction bars and parentheses to indicate multiplication, such as -2(3+4)';}
+function syncDivisionButtons(){$('divisionSign').setAttribute('aria-pressed',String(!fractionBars));$('fractionBar').setAttribute('aria-pressed',String(fractionBars));$('fractionBar').title='Use stacked fraction bars for division';}
 $('divisionSign').onclick=()=>setDivisionDisplay(false);$('fractionBar').onclick=()=>setDivisionDisplay(true);
-syncDivisionButtons();load('2(3+4)-7');initLayout(fit,()=>!busy&&!demonstrating&&!drag);
+function setMultiplicationDisplay(style){
+ if(busy||demonstrating||pendingAnswer)return;
+ multiplicationStyle=style;selected=null;
+ try{localStorage.setItem('order-multiplication-display',style);}catch{}
+ syncMultiplicationButtons();render();
+ for(const row of $('steps').querySelectorAll('.step'))row.querySelector('.step-expression').innerHTML=formatted(row.expressionTree);
+}
+function syncMultiplicationButtons(){
+ for(const [id,style] of [['multiplyTimes','times'],['multiplyDot','dot'],['multiplyParentheses','parentheses']])$(id).setAttribute('aria-pressed',String(style===multiplicationStyle));
+}
+$('multiplyTimes').onclick=()=>setMultiplicationDisplay('times');
+$('multiplyDot').onclick=()=>setMultiplicationDisplay('dot');
+$('multiplyParentheses').onclick=()=>setMultiplicationDisplay('parentheses');
+syncMultiplicationButtons();syncDivisionButtons();load('2(3+4)-7');initLayout(fit,()=>!busy&&!demonstrating&&!drag);
