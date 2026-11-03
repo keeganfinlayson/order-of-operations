@@ -102,3 +102,8 @@ aside.steps-only .steps-panel{grid-row:1}
 .workspace-power{display:inline-flex;align-items:center;gap:0;flex-shrink:0}
 .workspace-power>.sup{align-self:flex-start;margin-top:-.05em;margin-left:-.02em;font-size:.62em;line-height:1}
 .workspace-power>.sup .num{min-width:.65em;padding:0 .04em}
+
+/* Explicit colors in normal, focused, and locked answer states. */
+#answerInput{color-scheme:light;appearance:none;background:#fff;color:#243b45;-webkit-text-fill-color:#243b45;caret-color:#243b45;opacity:1}
+#answerInput:focus{background:#fff;color:#243b45}
+#answerInput:disabled{background:#e8f3fa;color:#243b45;-webkit-text-fill-color:#243b45;opacity:1}
