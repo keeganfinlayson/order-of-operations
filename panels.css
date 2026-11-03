@@ -74,3 +74,26 @@ aside.steps-only .steps-panel{grid-row:1}
 
 /* Keep the expression area available until an answer is requested. */
 .answer-slot:has(>#answerForm[hidden]){flex-basis:0;min-height:0;height:0}
+
+/* Prioritize expression space over control padding on shorter windows. */
+.workspace{container-name:workspace;container-type:size}
+@container workspace (max-height:650px){
+ .primary{padding:10px 16px;font-size:calc(16px * var(--panel-scale))}
+ .small-controls{margin-top:8px;gap:5px}
+ .small-controls button{padding:7px 6px;font-size:calc(11px * var(--panel-scale))}
+ .notation-control{margin-top:7px;gap:8px}
+ .notation-control button{padding:4px 8px}
+ footer{margin-top:8px;font-size:10px;gap:10px}
+ .arena{min-height:140px}
+}
+@container workspace (max-height:520px){
+ .controls{width:100%}
+ .primary{padding:8px 14px}
+ .small-controls{margin-top:6px}
+ .small-controls button{padding:6px 5px}
+ .notation-control{margin-top:5px}
+ footer{margin-top:5px}
+ .gemdas .grouping-stage{padding:5px 9px}
+ .operation-stages>[data-stage],.equal-priority>[data-stage]{padding:5px 4px}
+ .level-controls{gap:6px}
+}
