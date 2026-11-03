@@ -82,8 +82,8 @@ function requestMove(op){
  $('answerForm').hidden=false;$('answerInput').focus({preventScroll:true});
  $('status').textContent='The expression stays here while you work out this step.';
 }
-$('answerForm').addEventListener('submit',async e=>{
- e.preventDefault();const pending=pendingAnswer;if(!pending||$('answerInput').disabled)return;
+async function submitAnswer(){
+const pending=pendingAnswer;if(!pending||$('answerInput').disabled)return;
  const result=pending.round.submit($('answerInput').value);
  if(result.status==='invalid'){
   $('answerFeedback').textContent='Enter a number, decimal, or fraction.';$('answerInput').focus();return;
@@ -101,7 +101,12 @@ $('answerForm').addEventListener('submit',async e=>{
  await wait(result.status==='correct'?350:1600);
  if(pending!==pendingAnswer||pending.epoch!==session)return;
  clearAnswer();await perform(pending.op);
-});
+}
+// Validate directly so embedded views do not depend on native form submission.
+$('answerSubmit').type='button';
+$('answerSubmit').addEventListener('click',submitAnswer);
+$('answerInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();e.stopPropagation();submitAnswer();}});
+$('answerForm').addEventListener('submit',e=>{e.preventDefault();submitAnswer();});
 $('answerInput').addEventListener('input',()=>{$('answerInput').removeAttribute('aria-invalid');});
 async function perform(op){if(op.kind==='distribute')return performDistribution(op);if(busy)return;busy=true;selected=null;let epoch=session,a=elFor(op.left.id),b=elFor(op.right.id);if(!a||!b){busy=false;return;}let ar=a.getBoundingClientRect(),br=b.getBoundingClientRect(),cx=(ar.left+ar.width/2+br.left+br.width/2)/2,cy=(ar.top+ar.height/2+br.top+br.height/2)/2;
  const animate=(el,r)=>el.animate([{transform:'translate(0,0) scale(1)'},{transform:`translate(${cx-r.left-r.width/2}px,${cy-r.top-r.height/2}px) scale(.84)`,offset:.78},{transform:`translate(${cx-r.left-r.width/2}px,${cy-r.top-r.height/2}px) scale(.92)`,opacity:0}],{duration:340,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'});
