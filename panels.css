@@ -97,3 +97,8 @@ aside.steps-only .steps-panel{grid-row:1}
  .operation-stages>[data-stage],.equal-priority>[data-stage]{padding:5px 4px}
  .level-controls{gap:6px}
 }
+
+/* Anchor each exponent to its own base, including beside stacked fractions. */
+.workspace-power{display:inline-flex;align-items:center;gap:0;flex-shrink:0}
+.workspace-power>.sup{align-self:flex-start;margin-top:-.05em;margin-left:-.02em;font-size:.62em;line-height:1}
+.workspace-power>.sup .num{min-width:.65em;padding:0 .04em}
