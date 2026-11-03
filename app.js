@@ -37,7 +37,7 @@ function fit(){
  const work=document.querySelector('.workspace');
  const panelScale=Number(getComputedStyle(work).getPropertyValue('--panel-scale'))||1;
  const key=[session,Math.round(arena.clientWidth),Math.round(availableHeight),panelScale].join(':');
- const preferred=Math.max(16,Math.min(80*panelScale,availableHeight*.85));
+ const preferred=Math.max(16,Math.min(96*panelScale,(availableHeight-24)/1.35));
  let low=16,high=Math.floor(key===fittedScale.key?Math.min(preferred,fittedScale.size):preferred);
  if(fits(high))low=high;
  else while(high-low>.5){const middle=(low+high)/2;if(fits(middle))low=middle;else high=middle;}
