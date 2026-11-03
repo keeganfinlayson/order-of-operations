@@ -1,0 +1,31 @@
+/* Shared math typography. Every surface uses this exact baseline contract.
+   Only the container font size differs. Never center ordinary terms with flex. */
+.math-typeset{font-family:Arial,Helvetica,sans-serif;font-weight:700;line-height:1.25;white-space:nowrap;color:#29444e;font-variant-numeric:lining-nums}
+.math-typeset .math-row,.math-typeset .math-group,.math-typeset .math-power{display:inline-block;vertical-align:baseline;white-space:nowrap;line-height:1.25}
+.math-typeset .num{display:inline-block;position:relative;vertical-align:baseline;font:inherit;line-height:1.25;min-width:0;min-height:0;margin:0;padding:0 .04em;border:0;border-radius:0;background:transparent;box-shadow:none;color:inherit;user-select:none}
+.math-typeset .op{display:inline-block;vertical-align:baseline;padding:0 .16em;font-weight:700;line-height:1.25}
+.math-typeset .paren{display:inline-block;vertical-align:baseline;font-size:1.15em;line-height:0;font-weight:700;padding:0 .015em;color:#284d67}
+.math-typeset .multiplication-group>.paren{color:var(--multiply-color)}
+.math-typeset .math-exponent{display:inline-block;position:relative;vertical-align:baseline;top:-.58em;margin:0 0 0 .015em;padding:0;font-size:.62em;line-height:0}
+.math-typeset .math-exponent .num{color:var(--power-color);padding:0 .02em}
+.math-typeset .fraction{display:inline-flex;flex-direction:column;align-items:stretch;vertical-align:middle;line-height:1.15;margin:0 .09em}
+.math-typeset .numerator,.math-typeset .denominator{display:block;text-align:center;line-height:1.25;padding:.08em .14em}
+.math-typeset .numerator{border-bottom:.045em solid var(--divide-color);padding-bottom:.12em}
+.math-typeset .denominator{padding-top:.12em}
+.math-typeset .fraction .fraction{font-size:.84em}
+.math-typeset .math-group:has(>.math-row>.fraction)>.paren{transform:scaleY(1.8)}
+.exponent{color:var(--power-color)}.multiply{color:var(--multiply-color)}.divide{color:var(--divide-color)}.add{color:var(--add-color)}.subtract{color:var(--subtract-color)}
+.math-typeset .minus-token{display:inline-block;vertical-align:baseline;color:var(--multiply-color);font-weight:700;padding:0 .015em}
+.expression{display:block;text-align:center;width:100%;position:relative;padding:12px 4px;touch-action:none;flex-shrink:0;min-height:0}
+.expression [data-id]{touch-action:none}.expression .num,.expression .minus-token{cursor:grab}
+.expression .num.selected,.expression .num.target{color:#005d98;text-shadow:0 0 12px #7ab8df80;text-decoration:underline;text-underline-offset:.12em}
+.expression .num.target{text-decoration-style:double}
+.expression .num:focus-visible{outline:2px solid #0069a5;outline-offset:3px}
+.expression .drag-source{opacity:.25}
+.expression .minus-token.selected,.expression .distribution-target{outline:2px solid var(--multiply-color);outline-offset:3px;border-radius:4px}
+.expression .distribution-target{background:#0069a50b}
+.expression .awaiting-answer{outline:2px solid #0069a5;outline-offset:3px;border-radius:5px;background:#e8f3fa}
+.expression.complete .num{color:#176e78}
+.step-expression{display:block;min-width:0;max-width:100%;overflow-x:auto;overflow-y:hidden;padding:.3em 0}
+.flight{position:fixed;z-index:100;pointer-events:none;white-space:nowrap}
+.distribution-minus{color:var(--multiply-color);font-weight:700}

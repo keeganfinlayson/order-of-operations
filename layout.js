@@ -11,7 +11,7 @@ export function panelSizes(width,height,workspaceShare=.72,keyboardShare=.52,sta
 }
 export function fontSizes(width,height){
  const scale=clamp(Math.sqrt(Math.max(1,width*height)/(800*560)),.85,1.35);
- return {scale,expression:clamp(Math.min(width*.07,height*.15),24,80)};
+ return {scale};
 }
 export function initLayout(onResize,canResize=()=>true){
  const main=document.querySelector('main'),work=document.querySelector('.workspace'),aside=document.querySelector('aside');
@@ -32,7 +32,7 @@ export function initLayout(onResize,canResize=()=>true){
  }
  function scaleFonts(){
   let r=work.getBoundingClientRect(),fonts=fontSizes(r.width,r.height);
-  work.style.setProperty('--panel-scale',fonts.scale);work.style.setProperty('--expression-font',fonts.expression+'px');
+  work.style.setProperty('--panel-scale',fonts.scale);
   let kr=keyboard.getBoundingClientRect(),ks=clamp(Math.sqrt(kr.width*kr.height/(310*290)),.8,1.5);
   keyboard.style.setProperty('--key-scale',ks);
   let sr=steps.getBoundingClientRect(),ss=clamp(Math.sqrt(sr.width*sr.height/(310*280)),.85,1.5);
@@ -57,3 +57,4 @@ export function initLayout(onResize,canResize=()=>true){
  const observer=new ResizeObserver(schedule);[work,keyboard,steps].forEach(el=>observer.observe(el));
  const mainObserver=new ResizeObserver(apply);mainObserver.observe(main);media.addEventListener('change',apply);window.addEventListener('resize',apply);apply();
 }
+

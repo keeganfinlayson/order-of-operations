@@ -72,5 +72,3 @@ export function distribute(root,move){
  return normalize(root);
 }
 export const fmt=v=>Number.isInteger(v)?String(v):String(Number(v.toPrecision(10)));
-export function label(n){if(n.type==='number')return fmt(n.value);if(n.type==='group')return n.open+label(n.child)+n.close;if(n.type==='unary')return n.sign+label(n.child);return label(n.left)+({'*':' × ','/':' ÷ ','^':'^','+':' + ','-':' − '}[n.op])+label(n.right);}
-export function stage(n){let groups=[];function walk(t,depth=0){if(t.type==='group'){groups.push({node:t,depth:depth+1});walk(t.child,depth+1);}else if(t.type==='binary'){walk(t.left,depth);walk(t.right,depth);}else if(t.child)walk(t.child,depth);}walk(n);if(groups.length)return 'G';let r=ready(n);if(r.some(t=>t.op==='^'))return 'E';if(r.some(t=>'*/'.includes(t.op)))return 'MD';return n.type==='number'?'done':'AS';}
