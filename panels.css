@@ -71,3 +71,6 @@ aside.steps-only .steps-panel{grid-row:1}
 #answerInput[aria-invalid="true"]{border-color:#b34c00;outline-color:#b34c00}
 .awaiting-answer{outline:2px solid #0069a5;outline-offset:3px;border-radius:5px;background:#e8f3fa}
 @media(max-width:500px){#answerForm{padding:8px}.answer-entry{gap:6px}#answerInput{font-size:19px}#answerSubmit{padding:10px 8px}#answerQuestion{white-space:normal}}
+
+/* Keep the expression area available until an answer is requested. */
+.answer-slot:has(>#answerForm[hidden]){flex-basis:0;min-height:0;height:0}
