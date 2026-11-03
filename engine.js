@@ -23,7 +23,18 @@ export function parse(text){
 }
 export function evaluate(n){if(n.type==='number')return n.value;if(n.type==='group')return evaluate(n.child);if(n.type==='unary')return (n.sign==='-'?-1:1)*evaluate(n.child);let a=evaluate(n.left),b=evaluate(n.right);return ({'+':()=>a+b,'-':()=>a-b,'*':()=>a*b,'/':()=>a/b,'^':()=>a**b})[n.op]();}
 export function normalize(n){if(n.type==='group'){n.child=normalize(n.child);if(n.child.type==='number')return n.child;}if(n.type==='unary'){n.child=normalize(n.child);if(n.child.type==='number')return number(evaluate(n));}if(n.type==='binary'){n.left=normalize(n.left);n.right=normalize(n.right);}return n;}
-export function ready(root){let candidates=[];function walk(n,depth=0){if(n.type==='binary'){if(n.left.type==='number'&&n.right.type==='number')candidates.push({n,depth,priority:n.op==='^'?3:'*/'.includes(n.op)?2:1});else{walk(n.left,depth);walk(n.right,depth);}}else if(n.child)walk(n.child,depth+(n.type==='group'?1:0));}walk(root);if(!candidates.length)return [];let depth=Math.max(...candidates.map(c=>c.depth));candidates=candidates.filter(c=>c.depth===depth);let priority=Math.max(...candidates.map(c=>c.priority));return candidates.filter(c=>c.priority===priority).map(c=>c.n);}
+export function ready(root){
+ const candidates=[];
+ function walk(n){
+  if(n.type==='binary'){
+   // A complete numeric subtree can be evaluated independently of other branches.
+   // The parse tree preserves precedence, grouping, and left-to-right dependencies.
+   if(n.left.type==='number'&&n.right.type==='number')candidates.push(n);
+   else{walk(n.left);walk(n.right);}
+  }else if(n.child)walk(n.child);
+ }
+ walk(root);return candidates;
+}
 export function reduce(root,id){if(root.id===id)return number(evaluate(root));if(root.type==='binary'){root.left=reduce(root.left,id);root.right=reduce(root.right,id);}else if(root.child)root.child=reduce(root.child,id);return normalize(root);}
 const binary=(op,left,right)=>({type:'binary',op,left,right,id:++uid});
 function negateSum(n){
