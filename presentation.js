@@ -1,4 +1,4 @@
-import {fmt,ready} from './engine.js';
+import {fmt,ready} from './engine.js?v=7';
 const colors={'+':'add','-':'subtract','*':'multiply','/':'divide','^':'exponent'};
 const symbols={'+':'+','-':'−','*':'×','/':'÷'};
 const ungroup=n=>n.type==='group'?n.child:n;

@@ -1,8 +1,8 @@
-import{parse,ready,reduce,evaluate,fmt,distributions,distributionMove,distribute}from './engine.js';
-import{formatted as formatMath,activeStages}from './presentation.js';
-import{initLayout}from './layout.js';
-import{createAnswerRound}from './answers.js';
-import{createExpressionGenerator}from './generator.js';
+import{parse,ready,reduce,evaluate,fmt,distributions,distributionMove,distribute}from './engine.js?v=7';
+import{formatted as formatMath,activeStages}from './presentation.js?v=7';
+import{initLayout}from './layout.js?v=7';
+import{createAnswerRound}from './answers.js?v=7';
+import{createExpressionGenerator}from './generator.js?v=7';
 const nextExpression=createExpressionGenerator();
 let pendingAnswer=null;
 let fractionBars=false;

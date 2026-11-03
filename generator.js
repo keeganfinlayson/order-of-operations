@@ -1,4 +1,4 @@
-import {parse,evaluate} from './engine.js';
+import {parse,evaluate} from './engine.js?v=7';
 
 // Structure and notation are independent. Each level uses a shuffled deck of
 // families, with fresh small numbers on every draw and no recent exact repeats.
@@ -72,3 +72,4 @@ export function createExpressionGenerator(random=Math.random){
   throw Error('Could not generate an expression. Please try again.');
  };
 }
+
