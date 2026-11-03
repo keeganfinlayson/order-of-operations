@@ -107,3 +107,9 @@ aside.steps-only .steps-panel{grid-row:1}
 #answerInput{color-scheme:light;appearance:none;background:#fff;color:#243b45;-webkit-text-fill-color:#243b45;caret-color:#243b45;opacity:1}
 #answerInput:focus{background:#fff;color:#243b45}
 #answerInput:disabled{background:#e8f3fa;color:#243b45;-webkit-text-fill-color:#243b45;opacity:1}
+
+/* Keep ordinary numbers on the same baseline as bases with superscripts. */
+.step-expression .power-expression,.flight .power-expression{display:inline;vertical-align:baseline}
+.step-expression .power-expression>sup,.flight .power-expression>sup{font-size:.65em;line-height:0;vertical-align:super}
+.multiplication-control{margin-top:5px}
+.multiplication-control button{min-width:34px;font-weight:700}
